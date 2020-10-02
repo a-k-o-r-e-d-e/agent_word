@@ -8,7 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return AnimatedSplashScreen(splash: SvgPicture.asset('assets/ikire_1.svg',
+    return AnimatedSplashScreen(splash: SvgPicture.asset('assets/images/ikire_1.svg',
     // // scale: 2,
     // height: 500,
     // width: 500,

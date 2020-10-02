@@ -7,7 +7,7 @@ import 'package:number_inc_dec/number_inc_dec.dart';
 import 'package:string_validator/string_validator.dart';
 import 'package:agent_word/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:path/path.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Agent Word',
       theme: ThemeData(
         primaryColor: Colors.white,
         accentColor: ikireBlue,
@@ -46,10 +46,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String dbName = 'words2.db';
+  String dbName = 'agent_word.db';
   String dbPath;
   String tableName = 'words_alpha';
   Database database;
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final TextEditingController _wordStartTxtController = TextEditingController();
   final TextEditingController _wordEndTxtController = TextEditingController();
@@ -59,13 +61,25 @@ class _MyHomePageState extends State<MyHomePage> {
     _wordEndTxtController.dispose();
     _wordStartTxtController.dispose();
     super.dispose();
-  } // _setUpDB () async {
+  }
+  //
+  // _setUpDB () async {
   //   // Get a location using getDatabasesPath
   //   var databasesPath = await getDatabasesPath();
   //   dbPath = join(databasesPath, dbName);
   //
+  //
+  //   var exists = await databaseExists(dbPath);
+  //
+  //   if (!exists) {
+  //     // Should only happen the first time you create your application
+  //     print ("Creating a new database copy from assets");
+  //
+  //     // Make
+  //   }
+  //
   //   // var db = await openDatabase(dbName);
-  //   String sqlString = "CREATE TABLE $tableName (id INTEGER PRIMARY KEY, word TEXT, length INTEGER)";
+  //   String sqlCreate = "CREATE TABLE $tableName (id INTEGER PRIMARY KEY, word TEXT, length INTEGER)";
   //
   //   // open the database
   //    database = await openDatabase(dbPath, version: 2,
@@ -73,9 +87,9 @@ class _MyHomePageState extends State<MyHomePage> {
   //         // When creating the db, create the table
   //         print("On create called ");
   //
-  //         print(sqlString);
+  //         print(sqlCreate);
   //         await db.execute(
-  //             sqlString);
+  //             sqlCreate);
   //
   //       }).catchError((onError) {
   //         print(onError.runtimeType);
@@ -83,10 +97,10 @@ class _MyHomePageState extends State<MyHomePage> {
   //
   //   print(database);
   //
-  //   // database.execute(sqlString).whenComplete(() => print("On create called "));
+  //   // database.execute(sqlCreate).whenComplete(() => print("On create called "));
   //
   // }
-  //
+
   // _insertIntoDb (String word, int length) async {
   //
   //   // print("Here");
@@ -125,11 +139,11 @@ class _MyHomePageState extends State<MyHomePage> {
   //   });
   // }
   //
-  // _deleteDB () async {
-  //
-  //   // Delete the database
-  //   await deleteDatabase(dbPath);
-  // }
+  _deleteDB () async {
+
+    // Delete the database
+    await deleteDatabase(dbPath);
+  }
 
   String _validateWordInput(String str) {
     if (_wordStartTxtController.text.isEmpty &&
@@ -145,151 +159,148 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      // ),
-      body: Center(
-        child: Form(
-          child: Stack(
-            alignment: AlignmentDirectional.topCenter,
-            children: <Widget>[
-              Positioned(
-                  top: 40,
-                  // left: 48,
-                  // right: 47,
-                  child: Container(
-                    width: 265,
-                    child: RichText(
-                      text: TextSpan(
-                        text: 'Find words that ',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            color: ikireBlue,
-                            fontSize: 18,
+
+      body: SafeArea(
+        // Layout builder used to get the safe area height
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            print('Screen height: ${MediaQuery.of(context).size.height}');
+            print('Real safe height: ${constraints.maxHeight}');
+            return SingleChildScrollView(
+              child: Form(
+                key: formKey,
+                child: Stack(
+                  alignment: AlignmentDirectional.topCenter,
+                  children: <Widget>[
+                    // Container restricts the height of the stack to the height of our safe area
+                    // This enables the stack to work with SingleChildScrollView
+                    Container(height: constraints.maxHeight,),
+
+                    Positioned(
+                        top: 31,
+                        left: 48,
+                        // right: 47,
+                        child: Container(
+                          width: 265,
+                          child: RichText(
+                            text: TextSpan(
+                                text: 'Find words that ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  color: ikireBlue,
+                                  height: 1.5,
+                                  fontSize: 18,
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(text: 'start ' , style: TextStyle(color: ikireOrange)),
+                                  TextSpan(text: 'and '),
+                                  TextSpan(text: 'end ', style: TextStyle(color: ikireOrange)),
+                                  TextSpan(text: 'with letters of your choice.')
+
+                                ]
+                            ),
                           ),
-                        children: <TextSpan>[
-                          TextSpan(text: 'start ' , style: TextStyle(color: ikireOrange)),
-                          TextSpan(text: 'and '),
-                          TextSpan(text: 'end ', style: TextStyle(color: ikireOrange)),
-                          TextSpan(text: 'with letters of your choice.')
+                        )),
+                    Positioned(
+                        top: 119,
+                        child: SvgPicture.asset(
+                          'assets/images/ikire_read.svg',
+                          width: 172,
+                          height: 152,
+                        )),
+                    Positioned(
+                      top: 345,
+                      left: 50,
+                      child: Text("Length of Word (Optional)", style: TextStyle(fontSize: 12, height: 1.5),),
+                    ),
+                    Positioned(
+                      top: 369,
+                      width: 103,
+                      // height: 30,
+                      left: 50,
+                      child: NumberInputWithIncrementDecrement(
+                        // decIconSize: 15,
+                        // incIconSize: 15,
+                          scaleHeight: 0.7,
+                          // decIconBgColor: Hexcolor('#F0F0F0'),
+                          incDecBgColor: Hexcolor('#F0F0F0'),
+                          widgetContainerDecoration: BoxDecoration(
 
-                        ]
+                            color: Hexcolor('#F0F0F0'),
+                            // border: Border(),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          numberFieldDecoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                            border: InputBorder.none,
+
+                          ),
+                          controller: TextEditingController()),
+                    ),
+
+                    Positioned(
+                      top: 416,
+                      left: 50,
+                      child: Text('Word Starts With :', style: TextStyle(fontSize: 12, height: 1.5),),
+                    ),
+                    Positioned(
+                        top: 434,
+                        width: 260,
+                        height: 30,
+                        left: 50,
+                        child: TextFormField(
+                          keyboardType: TextInputType.text,
+                          validator: _validateWordInput,
+                          decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Hexcolor('#F0F0F0'),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(3),
+                                borderSide: BorderSide.none,
+                              )),
+                        )),
+                    Positioned(
+                      top: 484,
+                      left: 50,
+                      child: Text('Word Ends With :', style: TextStyle(fontSize: 12, height: 1.5),),
+                    ),
+                    Positioned(
+                        top: 502,
+                        width: 260,
+                        height: 30,
+                        left: 50,
+                        child: TextFormField(
+                          keyboardType: TextInputType.text,
+                          validator: _validateWordInput,
+                          decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Hexcolor('#F0F0F0'),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5),
+                                borderSide: BorderSide.none,
+                              )),
+                        )),
+                    Positioned(
+                      left: 135,
+                      height: 36,
+                      width: 90,
+                      top: 573,
+                      child: RaisedButton(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                        color: Color(0Xff4343EA),
+                        onPressed: () {},
+                        child: Text(
+                          "Search",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, color: Colors.white, height: 1.5),
+                        ),
                       ),
-                    ),
-                  )),
-              Positioned(
-                  top: 119,
-                  child: SvgPicture.asset(
-                    'assets/ikire_read.svg',
-                    width: 172,
-                    height: 152,
-                  )),
-              Positioned(
-                top: 345,
-                left: 50,
-                child: Text("Length of Word (Optional)", style: TextStyle(fontSize: 12),),
-              ),
-              Positioned(
-                top: 369,
-                width: 103,
-                // height: 30,
-                left: 50,
-                child: NumberInputWithIncrementDecrement(
-                    // decIconSize: 15,
-                    // incIconSize: 15,
-                    scaleHeight: 0.7,
-                    // decIconBgColor: Hexcolor('#F0F0F0'),
-                    incDecBgColor: Hexcolor('#F0F0F0'),
-                    widgetContainerDecoration: BoxDecoration(
-
-                      color: Hexcolor('#F0F0F0'),
-                        // border: Border(),
-                        borderRadius: BorderRadius.circular(5),
-                    ),
-                    numberFieldDecoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                      border: InputBorder.none,
-
-                    ),
-                    controller: TextEditingController()),
-              ),
-              //     TextFormField(
-              //   keyboardType: TextInputType.text,
-              //   validator: _validateWordInput,
-              //   decoration: InputDecoration(
-              //       filled: true,
-              //       fillColor: Hexcolor('#F0F0F0'),
-              //       border: OutlineInputBorder(
-              //         borderRadius: BorderRadius.circular(3),
-              //         borderSide: BorderSide.none,
-              //       )
-              //   ),
-              // )),
-
-              Positioned(
-                  top: 416,
-                  width: 183,
-                  left: 50,
-                  child: Text('Word Starts With :', style: TextStyle(fontSize: 12),),
-              ),
-              Positioned(
-                  top: 434,
-                  width: 260,
-                  height: 30,
-                  left: 50,
-                  child: TextFormField(
-                    keyboardType: TextInputType.text,
-                    validator: _validateWordInput,
-                    decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Hexcolor('#F0F0F0'),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(3),
-                          borderSide: BorderSide.none,
-                        )),
-                  )),
-              Positioned(
-                  top: 484,
-                  height: 13,
-                  width: 176,
-                  left: 50,
-                  child: Text('Word Ends With :', style: TextStyle(fontSize: 12),),
-              ),
-              Positioned(
-                  top: 502,
-                  width: 260,
-                  height: 30,
-                  left: 50,
-                  child: TextFormField(
-                    keyboardType: TextInputType.text,
-                    validator: _validateWordInput,
-                    decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Hexcolor('#F0F0F0'),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(3),
-                          borderSide: BorderSide.none,
-                        )),
-                  )),
-              Positioned(
-                left: 135,
-                height: 36,
-                width: 90,
-                top: 573,
-                child: RaisedButton(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                  color: Color(0Xff4343EA),
-                  onPressed: () {},
-                  child: Text(
-                    "Search",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500, color: Colors.white),
-                  ),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
+              ),
+            );
+          },
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
