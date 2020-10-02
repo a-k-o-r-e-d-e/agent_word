@@ -1,18 +1,20 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:agent_word/splash_screen.dart';
+import 'package:agent_word/utils.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:number_inc_dec/number_inc_dec.dart';
-import 'package:string_validator/string_validator.dart';
-import 'package:agent_word/utils.dart';
-import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:string_validator/string_validator.dart';
 
 void main() {
-
   LicenseRegistry.addLicense(() async* {
     final license = await rootBundle.loadString('assets/google_fonts/OFL.txt');
     yield LicenseEntryWithLineBreaks(['google_fonts'], license);
@@ -50,56 +52,66 @@ class _MyHomePageState extends State<MyHomePage> {
   String dbPath;
   String tableName = 'words_alpha';
   Database database;
+  bool isWordStartError = false;
+  bool isWordEndError = false;
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final TextEditingController _wordStartTxtController = TextEditingController();
   final TextEditingController _wordEndTxtController = TextEditingController();
+  final TextEditingController _wordCountTxtController = TextEditingController();
 
   @override
   void dispose() {
     _wordEndTxtController.dispose();
     _wordStartTxtController.dispose();
+    _wordCountTxtController.dispose();
     super.dispose();
   }
-  //
-  // _setUpDB () async {
-  //   // Get a location using getDatabasesPath
-  //   var databasesPath = await getDatabasesPath();
-  //   dbPath = join(databasesPath, dbName);
-  //
-  //
-  //   var exists = await databaseExists(dbPath);
-  //
-  //   if (!exists) {
-  //     // Should only happen the first time you create your application
-  //     print ("Creating a new database copy from assets");
-  //
-  //     // Make
-  //   }
-  //
-  //   // var db = await openDatabase(dbName);
-  //   String sqlCreate = "CREATE TABLE $tableName (id INTEGER PRIMARY KEY, word TEXT, length INTEGER)";
-  //
-  //   // open the database
-  //    database = await openDatabase(dbPath, version: 2,
-  //       onCreate: (Database db, int version) async {
-  //         // When creating the db, create the table
-  //         print("On create called ");
-  //
-  //         print(sqlCreate);
-  //         await db.execute(
-  //             sqlCreate);
-  //
-  //       }).catchError((onError) {
-  //         print(onError.runtimeType);
-  //    });
-  //
-  //   print(database);
-  //
-  //   // database.execute(sqlCreate).whenComplete(() => print("On create called "));
-  //
-  // }
+
+  @override
+  void initState() {
+    super.initState();
+    _setUpDB();
+  }
+
+  _setUpDB() async {
+    // Get a location using getDatabasesPath
+    var databasesPath = await getDatabasesPath();
+    dbPath = join(databasesPath, dbName);
+
+    var exists = await databaseExists(dbPath);
+
+    if (!exists) {
+      // Should only happen the first time you create your application
+      print("Creating a new database copy from assets");
+
+      // Make sure the parent directory exists
+      try {
+        await Directory(dirname(dbPath)).create(recursive: true);
+      } catch (_) {}
+
+      // copy from asset
+      ByteData data = await rootBundle.load(join("assets", "agent_word.db"));
+      List<int> bytes =
+          data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+
+      // Write and flush the bytes written
+      await File(dbPath).writeAsBytes(bytes, flush: true);
+    } else {
+      print("Opening existing database");
+    }
+
+    // var db = await openDatabase(dbName);
+    // String sqlCreate = "CREATE TABLE $tableName (id INTEGER PRIMARY KEY, word TEXT, length INTEGER)";
+
+    // open the database
+    database = await openDatabase(dbPath, readOnly: true);
+
+    print(database);
+
+    // database.execute(sqlCreate).whenComplete(() => print("On create called "));
+  }
 
   // _insertIntoDb (String word, int length) async {
   //
@@ -139,13 +151,21 @@ class _MyHomePageState extends State<MyHomePage> {
   //   });
   // }
   //
-  _deleteDB () async {
 
+  _deleteDB() async {
     // Delete the database
     await deleteDatabase(dbPath);
   }
 
-  String _validateWordInput(String str) {
+  String _validateWordInput(String str, bool isWordStart) {
+    setState(() {
+      if (isWordStart) {
+        isWordStartError = true;
+      } else {
+        isWordEndError = true;
+      }
+    });
+
     if (_wordStartTxtController.text.isEmpty &&
         _wordEndTxtController.text.isEmpty) {
       return "Atleast one of these two must be filled";
@@ -153,18 +173,45 @@ class _MyHomePageState extends State<MyHomePage> {
       return "Word should contain letters only";
     }
 
+    setState(() {
+      if (isWordStart) {
+        isWordStartError = true;
+      } else {
+        isWordEndError = false;
+      }
+    });
+
     return null;
+  }
+
+  _searchDB() async {
+    if (formKey.currentState.validate()) {
+      String wordStart = _wordStartTxtController.text;
+      String wordEnd = _wordEndTxtController.text;
+      String wordCount = _wordCountTxtController.text;
+
+
+      String queryString = 'Select * FROM $tableName';
+      //Get the records
+      List <Map> list = await database.rawQuery(queryString);
+      print(list);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    double wordStartHeight = isWordStartError ? 50 : 30;
+    double wordEndHeight = isWordEndError ? 50 : 30;
 
+    return Scaffold(
       body: SafeArea(
         // Layout builder used to get the safe area height
         child: LayoutBuilder(
           builder: (context, constraints) {
-            print('Screen height: ${MediaQuery.of(context).size.height}');
+            print('Screen height: ${MediaQuery
+                .of(context)
+                .size
+                .height}');
             print('Real safe height: ${constraints.maxHeight}');
             return SingleChildScrollView(
               child: Form(
@@ -174,7 +221,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: <Widget>[
                     // Container restricts the height of the stack to the height of our safe area
                     // This enables the stack to work with SingleChildScrollView
-                    Container(height: constraints.maxHeight,),
+                    Container(height: MediaQuery
+                        .of(context)
+                        .size
+                        .height,),
 
                     Positioned(
                         top: 31,
@@ -231,11 +281,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             borderRadius: BorderRadius.circular(5),
                           ),
                           numberFieldDecoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 0),
                             border: InputBorder.none,
 
                           ),
-                          controller: TextEditingController()),
+                          controller: _wordCountTxtController),
                     ),
 
                     Positioned(
@@ -246,11 +297,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     Positioned(
                         top: 434,
                         width: 260,
-                        height: 30,
+                        height: wordStartHeight,
                         left: 50,
                         child: TextFormField(
                           keyboardType: TextInputType.text,
-                          validator: _validateWordInput,
+                          validator: (value) {
+                            return _validateWordInput(value, true);
+                          },
+                          controller: _wordStartTxtController,
                           decoration: InputDecoration(
                               filled: true,
                               fillColor: Hexcolor('#F0F0F0'),
@@ -267,11 +321,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     Positioned(
                         top: 502,
                         width: 260,
-                        height: 30,
+                        height: wordEndHeight,
                         left: 50,
                         child: TextFormField(
                           keyboardType: TextInputType.text,
-                          validator: _validateWordInput,
+                          validator: (value) {
+                            return _validateWordInput(value, false);
+                          },
+                          controller: _wordEndTxtController,
                           decoration: InputDecoration(
                               filled: true,
                               fillColor: Hexcolor('#F0F0F0'),
@@ -286,13 +343,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       width: 90,
                       top: 573,
                       child: RaisedButton(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius
+                            .circular(5)),
                         color: Color(0Xff4343EA),
-                        onPressed: () {},
+                        onPressed: _searchDB,
                         child: Text(
                           "Search",
                           style: TextStyle(
-                              fontWeight: FontWeight.w500, color: Colors.white, height: 1.5),
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                              height: 1.5),
                         ),
                       ),
                     )
