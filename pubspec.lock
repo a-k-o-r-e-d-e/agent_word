@@ -289,6 +289,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.7.0"
+  splashscreen:
+    dependency: "direct main"
+    description:
+      name: splashscreen
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.2.0"
   sqflite:
     dependency: "direct main"
     description:
@@ -387,6 +394,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "4.5.1"
+  your_splash:
+    dependency: "direct main"
+    description:
+      name: your_splash
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.1"
 sdks:
   dart: ">=2.9.0-14.0.dev <3.0.0"
   flutter: ">=1.18.0-6.0.pre <2.0.0"

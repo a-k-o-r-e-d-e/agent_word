@@ -114,6 +114,16 @@ class _AltHomePageState extends State<AltHomePage> {
 
   _searchDB(BuildContext context) async {
     if (formKey.currentState.validate()) {
+      setState(() {
+        _loading = true;
+      });
+
+      // FocusScopeNode currentFocus = FocusScope.of(context);
+      //
+      // if (!currentFocus.hasPrimaryFocus) {
+      //   currentFocus.focusedChild.unfocus();
+      // }
+
       String wordStart = _wordStartTxtController.text;
       String wordEnd = _wordEndTxtController.text;
       int wordCount = int.parse(_wordCountTxtController.text);
@@ -125,21 +135,24 @@ class _AltHomePageState extends State<AltHomePage> {
         queryString += " AND length=$wordCount";
       }
       //Get the records
-      setState(() {
-        _loading = true;
-      });
+
       List<Map> list = await database.rawQuery(queryString).then((value) {
         value.forEach((element) {
           print(element);
         });
 
+        var nextPage;
+
         if (value.isNotEmpty) {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-            return WordsFoundPage(
-              wordsFound: value,
-            );
-          }));
+          nextPage = WordsFoundPage(
+            wordsFound: value,
+          );
+        } else {
+          nextPage = NoWordsFoundPage();
         }
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return nextPage;
+        }));
       }).whenComplete(() {
         setState(() {
           _loading = false;
@@ -153,12 +166,13 @@ class _AltHomePageState extends State<AltHomePage> {
 
   _buildLoadingScreen() {
     return Scaffold(
+      backgroundColor: Hexcolor('#E5E5E5'),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-              margin: EdgeInsets.only(left: 31, top: 26),
+              margin: EdgeInsets.only(left: 31, top: 40),
               child: CircleAvatar(
                 backgroundColor: Hexcolor('#F6FAF9'),
                 child: IconButton(
@@ -169,7 +183,7 @@ class _AltHomePageState extends State<AltHomePage> {
           Container(
               height: 57,
               width: 57,
-              margin: EdgeInsets.only(left: 150, right: 150, top: 284),
+              margin: EdgeInsets.only(left: 150, right: 150, top: 230),
               child: LoadingIndicator(
                 indicatorType: Indicator.ballPulse,
                 color: ikireBlueBalls,
