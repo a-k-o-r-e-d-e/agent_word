@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
       title: 'Agent Word',
       theme: ThemeData(
         primaryColor: Colors.white,
+        backgroundColor: Hexcolor('#E5E5E5'),
         accentColor: ikireBlue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: GoogleFonts.poppinsTextTheme(

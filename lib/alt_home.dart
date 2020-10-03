@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:agent_word/search_results_pages.dart';
 import 'package:agent_word/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -111,7 +112,7 @@ class _AltHomePageState extends State<AltHomePage> {
     });
   }
 
-  _searchDB() async {
+  _searchDB(BuildContext context) async {
     if (formKey.currentState.validate()) {
       String wordStart = _wordStartTxtController.text;
       String wordEnd = _wordEndTxtController.text;
@@ -127,14 +128,26 @@ class _AltHomePageState extends State<AltHomePage> {
       setState(() {
         _loading = true;
       });
-      List<Map> list = await database.rawQuery(queryString).whenComplete(() {
+      List<Map> list = await database.rawQuery(queryString).then((value) {
+        value.forEach((element) {
+          print(element);
+        });
+
+        if (value.isNotEmpty) {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+            return WordsFoundPage(
+              wordsFound: value,
+            );
+          }));
+        }
+      }).whenComplete(() {
         setState(() {
           _loading = false;
         });
       });
-      list.forEach((element) {
-        print(element);
-      });
+      // list.forEach((element) {
+      //   print(element);
+      // });
     }
   }
 
@@ -150,6 +163,7 @@ class _AltHomePageState extends State<AltHomePage> {
                 backgroundColor: Hexcolor('#F6FAF9'),
                 child: IconButton(
                     icon: Icon(Icons.arrow_back),
+                    color: ikireBlueBalls,
                     onPressed: () => _loading = false),
               )),
           Container(
@@ -326,7 +340,7 @@ class _AltHomePageState extends State<AltHomePage> {
                           borderRadius: BorderRadius.circular(5)),
                       color: Color(0Xff4343EA),
                       onPressed: () {
-                        _searchDB();
+                        _searchDB(context);
                       },
                       child: Text(
                         "Search",
