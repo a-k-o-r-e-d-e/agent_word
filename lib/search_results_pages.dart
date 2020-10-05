@@ -11,7 +11,7 @@ class WordsFoundPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Hexcolor('#E5E5E5'),
+      // backgroundColor: Hexcolor('#E5E5E5'),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,7 +74,7 @@ class NoWordsFoundPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Hexcolor('#E5E5E5'),
+      // backgroundColor: Hexcolor('#E5E5E5'),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
