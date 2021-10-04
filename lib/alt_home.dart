@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:agent_word/search_results_pages.dart';
 import 'package:agent_word/utils.dart';
@@ -73,15 +72,11 @@ class _AltHomePageState extends State<AltHomePage> {
       print("Opening existing database");
     }
 
-    // var db = await openDatabase(dbName);
-    // String sqlCreate = "CREATE TABLE $tableName (id INTEGER PRIMARY KEY, word TEXT, length INTEGER)";
-
     // open the database
     database = await openDatabase(dbPath, readOnly: true);
 
     print(database);
 
-    // database.execute(sqlCreate).whenComplete(() => print("On create called "));
   }
 
   String _validateWordInput(String str, bool isWordStart) {
@@ -102,13 +97,6 @@ class _AltHomePageState extends State<AltHomePage> {
 
     return null;
 
-    setState(() {
-      if (isWordStart) {
-        isWordStartError = true;
-      } else {
-        isWordEndError = false;
-      }
-    });
   }
 
   _submitForm(BuildContext context) {
@@ -202,17 +190,17 @@ class _AltHomePageState extends State<AltHomePage> {
                       width: 103,
                       child: NumberInputWithIncrementDecrement(
                           scaleHeight: 0.75,
-                          incDecBgColor: Hexcolor('#F0F0F0'),
-                          widgetContainerDecoration: BoxDecoration(
-                            color: Hexcolor('#F0F0F0'),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          numberFieldDecoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 0),
-                            border: InputBorder.none,
-                          ),
-                          controller: _wordCountTxtController),
+                      incDecBgColor: HexColor('#F0F0F0'),
+                      widgetContainerDecoration: BoxDecoration(
+                        color: HexColor('#F0F0F0'),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      numberFieldDecoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 0, horizontal: 0),
+                        border: InputBorder.none,
+                      ),
+                      controller: _wordCountTxtController),
                     ),
                     Container(
                         margin: const EdgeInsets.only(left: 50, top: 10),
@@ -236,13 +224,13 @@ class _AltHomePageState extends State<AltHomePage> {
                         style: TextStyle(fontSize: 13),
                         decoration: InputDecoration(
                             isDense: true,
-                            contentPadding: const EdgeInsets.all(10),
-                            filled: true,
-                            fillColor: Hexcolor('#F0F0F0'),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(3),
-                              borderSide: BorderSide.none,
-                            )),
+                        contentPadding: const EdgeInsets.all(10),
+                        filled: true,
+                        fillColor: HexColor('#F0F0F0'),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(3),
+                          borderSide: BorderSide.none,
+                        )),
                       ),
                     ),
                     Container(
@@ -264,33 +252,35 @@ class _AltHomePageState extends State<AltHomePage> {
                         style: TextStyle(fontSize: 13),
                         decoration: InputDecoration(
                             contentPadding: EdgeInsets.all(10),
-                            isDense: true,
-                            filled: true,
-                            fillColor: Hexcolor('#F0F0F0'),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              borderSide: BorderSide.none,
-                            )),
+                        isDense: true,
+                        filled: true,
+                        fillColor: HexColor('#F0F0F0'),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          borderSide: BorderSide.none,
+                        )),
                       ),
                     ),
                     Container(
                       margin: const EdgeInsets.only(
-                          left: 135, right: 135, bottom: 10, top: 20),
-                      child: RaisedButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
-                        color: Color(0Xff4343EA),
-                        onPressed: () {
-                          _submitForm(context);
-                        },
-                        child: Text(
-                          "Search",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                              height: 1.5),
-                        ),
-                      ),
+                      left: 135, right: 135, bottom: 10, top: 20),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                      primary: Color(0Xff4343EA),
+                    ),
+                    onPressed: () {
+                      _submitForm(context);
+                    },
+                    child: Text(
+                      "Search",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                          height: 1.5),
+                    ),
+                  ),
                     ),
                   ],
                 ),
@@ -318,7 +308,7 @@ class LoadingPage extends StatelessWidget {
 
   _buildLoadingScreen(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Hexcolor('#E5E5E5'),
+      // backgroundColor: HexColor('#E5E5E5'),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -327,7 +317,7 @@ class LoadingPage extends StatelessWidget {
             Container(
                 margin: EdgeInsets.only(left: 31, top: 40),
                 child: CircleAvatar(
-                  backgroundColor: Hexcolor('#F6FAF9'),
+                  backgroundColor: HexColor('#F6FAF9'),
                   child: IconButton(
                       icon: Icon(Icons.arrow_back),
                       color: ikireBlueBalls,
@@ -339,13 +329,13 @@ class LoadingPage extends StatelessWidget {
                 margin: EdgeInsets.only(left: 150, right: 150, top: 230),
                 child: LoadingIndicator(
                   indicatorType: Indicator.ballPulse,
-                  color: ikireBlueBalls,
-                  colors: [Colors.grey],
+                  pathBackgroundColor: Colors.grey,
+                  colors: [ikireBlueBalls],
                 )),
             Container(
                 margin: EdgeInsets.only(top: 10, left: 79, right: 79),
                 child: Text(
-                  "Agentword is fetching words",
+                  "AgentWord is fetching words",
                   style: TextStyle(
                       color: ikireBlueLight,
                       fontWeight: FontWeight.w200,
@@ -359,12 +349,6 @@ class LoadingPage extends StatelessWidget {
   }
 
   _searchDB(BuildContext context, String queryString) async {
-    // setState(() {
-    //   _loading = true;
-    // });
-
-    // FocusScopeNode currentFocus = FocusScope.of(context);
-
 
     await database.rawQuery(queryString).then((value) {
       value.forEach((element) {

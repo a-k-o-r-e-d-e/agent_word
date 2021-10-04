@@ -1,5 +1,4 @@
 import 'package:agent_word/alt_home.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:your_splash/your_splash.dart';
@@ -28,7 +27,7 @@ class MySplashScreen extends StatelessWidget {
             child: Text(
               "AGENTWORD",
               style: TextStyle(
-                  color: Hexcolor('#2222C3'),
+                  color: HexColor('#2222C3'),
                   fontSize: 32,
                   fontWeight: FontWeight.w500,
                   height: 1.5),

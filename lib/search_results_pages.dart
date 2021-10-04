@@ -11,7 +11,7 @@ class WordsFoundPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Hexcolor('#E5E5E5'),
+      // backgroundColor: HexColor('#E5E5E5'),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,7 +21,7 @@ class WordsFoundPage extends StatelessWidget {
               Container(
                   margin: EdgeInsets.only(left: 31, top: 40),
                   child: CircleAvatar(
-                    backgroundColor: Hexcolor('#F6FAF9'),
+                    backgroundColor: HexColor('#F6FAF9'),
                     radius: 19,
                     child: IconButton(
                         icon: Icon(Icons.arrow_back),
@@ -74,7 +74,6 @@ class NoWordsFoundPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Hexcolor('#E5E5E5'),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,7 +81,7 @@ class NoWordsFoundPage extends StatelessWidget {
           Container(
               margin: EdgeInsets.only(left: 31, top: 40),
               child: CircleAvatar(
-                backgroundColor: Hexcolor('#F6FAF9'),
+                backgroundColor: HexColor('#F6FAF9'),
                 child: IconButton(
                     icon: Icon(Icons.arrow_back),
                     color: ikireBlueBalls,
@@ -104,7 +103,7 @@ class NoWordsFoundPage extends StatelessWidget {
               child: Text(
                 "No word matches your request!",
                 style: TextStyle(
-                    color: Hexcolor('#E50404'),
+                    color: HexColor('#E50404'),
                     fontWeight: FontWeight.w200,
                     fontSize: 14,
                     height: 1.5),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
-Color ikireBlue = Hexcolor('#4343EA');
-Color ikireBlueLight = Hexcolor('#000085');
-Color ikireBlueBalls = Hexcolor('#1414B8');
-Color ikireOrange = Hexcolor('#FF6666');
+Color ikireBlue = HexColor('#4343EA');
+Color ikireBlueLight = HexColor('#000085');
+Color ikireBlueBalls = HexColor('#1414B8');
+Color ikireOrange = HexColor('#FF6666');
 
 String capitalize(String string) {
   if (string == null) {
