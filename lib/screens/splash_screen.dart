@@ -1,4 +1,4 @@
-import 'package:agent_word/alt_home.dart';
+import 'package:agent_word/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:your_splash/your_splash.dart';
@@ -8,7 +8,7 @@ class MySplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SplashScreen.timed(
         seconds: 3,
-        route: MaterialPageRoute(builder: (_) => AltHomePage()),
+        route: MaterialPageRoute(builder: (_) => HomeScreen()),
         body: _buildSplashScreen());
   }
 

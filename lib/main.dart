@@ -1,4 +1,4 @@
-import 'package:agent_word/splash_screen.dart';
+import 'package:agent_word/screens/splash_screen.dart';
 import 'package:agent_word/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

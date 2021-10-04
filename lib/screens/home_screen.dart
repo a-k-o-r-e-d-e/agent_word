@@ -1,23 +1,22 @@
 import 'dart:io';
 
-import 'package:agent_word/search_results_pages.dart';
+import 'package:agent_word/screens/search_result_screen.dart';
 import 'package:agent_word/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 import 'package:number_inc_dec/number_inc_dec.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:string_validator/string_validator.dart';
 
-class AltHomePage extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   @override
-  _AltHomePageState createState() => _AltHomePageState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _AltHomePageState extends State<AltHomePage> {
+class _HomeScreenState extends State<HomeScreen> {
   String dbName = 'agent_word.db';
 
   String dbPath;
@@ -27,9 +26,7 @@ class _AltHomePageState extends State<AltHomePage> {
   Database database;
 
   bool isWordStartError = false;
-
   bool isWordEndError = false;
-  bool _loading = false;
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -112,8 +109,11 @@ class _AltHomePageState extends State<AltHomePage> {
         queryString += " AND length=$wordCount";
       }
 
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) =>
-          LoadingPage(database: database, queryString: queryString,)));
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => SearchResultScreen(
+                database: database,
+                queryString: queryString,
+              )));
       //Get the records
     }
   }
@@ -288,86 +288,5 @@ class _AltHomePageState extends State<AltHomePage> {
             );
           }),
         ));
-  }
-}
-
-
-class LoadingPage extends StatelessWidget {
-
-  final Database database;
-  final String queryString;
-
-  LoadingPage({ @required this.database, @required this.queryString});
-
-  @override
-  Widget build(BuildContext context) {
-    _searchDB(context, queryString);
-    return _buildLoadingScreen(context);
-  }
-
-
-  _buildLoadingScreen(BuildContext context) {
-    return Scaffold(
-      // backgroundColor: HexColor('#E5E5E5'),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-                margin: EdgeInsets.only(left: 31, top: 40),
-                child: CircleAvatar(
-                  backgroundColor: HexColor('#F6FAF9'),
-                  child: IconButton(
-                      icon: Icon(Icons.arrow_back),
-                      color: ikireBlueBalls,
-                      onPressed: () => Navigator.pop(context)),
-                )),
-            Container(
-                height: 57,
-                width: 57,
-                margin: EdgeInsets.only(left: 150, right: 150, top: 230),
-                child: LoadingIndicator(
-                  indicatorType: Indicator.ballPulse,
-                  pathBackgroundColor: Colors.grey,
-                  colors: [ikireBlueBalls],
-                )),
-            Container(
-                margin: EdgeInsets.only(top: 10, left: 79, right: 79),
-                child: Text(
-                  "AgentWord is fetching words",
-                  style: TextStyle(
-                      color: ikireBlueLight,
-                      fontWeight: FontWeight.w200,
-                      fontSize: 14,
-                      height: 1.5),
-                ))
-          ],
-        ),
-      ),
-    );
-  }
-
-  _searchDB(BuildContext context, String queryString) async {
-
-    await database.rawQuery(queryString).then((value) {
-      value.forEach((element) {
-        print(element);
-      });
-
-      var nextPage;
-
-      if (value.isNotEmpty) {
-        nextPage = WordsFoundPage(
-          wordsFound: value,
-        );
-      } else {
-        nextPage = NoWordsFoundPage();
-      }
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) {
-            return nextPage;
-          }));
-    });
   }
 }
