@@ -4,7 +4,7 @@ import '../utils.dart';
 
 class CustomBackButton extends StatelessWidget {
   const CustomBackButton({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override

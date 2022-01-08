@@ -11,7 +11,7 @@ class SearchResultScreen extends StatelessWidget {
   final Database database;
   final String queryString;
 
-  SearchResultScreen({@required this.database, @required this.queryString});
+  SearchResultScreen({required this.database, required this.queryString});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class SearchResultScreen extends StatelessWidget {
   }
 
   _buildLoadingScreen(BuildContext context) {
-    return FutureBuilder<List<Map<String, Object>>>(
+    return FutureBuilder<List<Map<String, Object?>>>(
         future: _searchDB(queryString),
         builder: (context, snapshot) {
           return Scaffold(
@@ -27,7 +27,7 @@ class SearchResultScreen extends StatelessWidget {
               elevation: 0,
               leading: CustomBackButton(),
               title: Text(
-                snapshot.hasData && snapshot.data.isNotEmpty
+                snapshot.hasData && snapshot.data!.isNotEmpty
                     ? "Words Found"
                     : '',
                 style: TextStyle(
@@ -41,7 +41,7 @@ class SearchResultScreen extends StatelessWidget {
             ),
             body: Builder(builder: (_) {
               if (snapshot.hasData) {
-                if (snapshot.data.isNotEmpty) {
+                if (snapshot.data!.isNotEmpty) {
                   return WordsFoundList(wordsFound: snapshot.data);
                 }
                 return NoWordsFound();
@@ -53,7 +53,7 @@ class SearchResultScreen extends StatelessWidget {
         });
   }
 
-  Future<List<Map<String, Object>>> _searchDB(String queryString) async {
+  Future<List<Map<String, Object?>>>? _searchDB(String queryString) async {
     return database.rawQuery(queryString);
   }
 }

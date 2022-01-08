@@ -19,11 +19,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String dbName = 'agent_word.db';
 
-  String dbPath;
+  late String dbPath;
 
   String tableName = 'words_alpha';
 
-  Database database;
+  late Database database;
 
   bool isWordStartError = false;
   bool isWordEndError = false;
@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   }
 
-  String _validateWordInput(String str, bool isWordStart) {
+  String? _validateWordInput(String str, bool isWordStart) {
     setState(() {
       if (isWordStart) {
         isWordStartError = true;
@@ -97,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _submitForm(BuildContext context) {
-    if (formKey.currentState.validate()) {
+    if (formKey.currentState!.validate()) {
       String wordStart = _wordStartTxtController.text;
       String wordEnd = _wordEndTxtController.text;
       int wordCount = int.parse(_wordCountTxtController.text);
@@ -218,7 +218,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: TextFormField(
                         keyboardType: TextInputType.text,
                         validator: (value) {
-                          return _validateWordInput(value, true);
+                          return _validateWordInput(value!, true);
                         },
                         controller: _wordStartTxtController,
                         style: TextStyle(fontSize: 13),
@@ -246,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: TextFormField(
                         keyboardType: TextInputType.text,
                         validator: (value) {
-                          return _validateWordInput(value, false);
+                          return _validateWordInput(value!, false);
                         },
                         controller: _wordEndTxtController,
                         style: TextStyle(fontSize: 13),

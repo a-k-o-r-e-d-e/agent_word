@@ -2,9 +2,9 @@ import 'package:agent_word/utils.dart';
 import 'package:flutter/material.dart';
 
 class WordsFoundList extends StatelessWidget {
-  final List<Map<String, Object>> wordsFound;
+  final List<Map<String, Object?>>? wordsFound;
 
-  WordsFoundList({this.wordsFound});
+  WordsFoundList({required this.wordsFound});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class WordsFoundList extends StatelessWidget {
               left: 41,
             ),
             title: Text(
-              capitalize(wordsFound[index]['word']),
+              capitalize(wordsFound![index]['word'] as String),
               style: TextStyle(
                   fontSize: 13, fontWeight: FontWeight.w300, height: 1.5),
             ),
@@ -27,6 +27,6 @@ class WordsFoundList extends StatelessWidget {
         separatorBuilder: (context, index) {
           return Divider();
         },
-        itemCount: wordsFound.length);
+        itemCount: wordsFound?.length ?? 0);
   }
 }
